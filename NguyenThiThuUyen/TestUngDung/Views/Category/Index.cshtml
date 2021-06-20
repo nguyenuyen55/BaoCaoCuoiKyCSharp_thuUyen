@@ -1,0 +1,15 @@
+﻿
+@model List<ModelEF.Model.Category>
+@{
+    ViewBag.Title = "ProductCategory";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="categories">
+    <ul>
+        <h3>DANH MỤC SẢN PHẨM</h3>
+        @foreach (var item in Model)
+        {
+            <li><a href="/product/@item.ID">@item.Name</a></li>
+        }
+</div>

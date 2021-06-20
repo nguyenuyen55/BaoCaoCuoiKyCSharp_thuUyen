@@ -1,0 +1,100 @@
+﻿@model PagedList.IPagedList<ModelEF.Model.UserAccount>
+@using PagedList.Mvc;
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@section header{
+    Danh sách người dùng
+}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">DataTables Example</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="create" style="float:left">
+                        <button class="btn btn-info " onclick="location.href = '/Admin/User/Create/';">Thêm mới</button>
+                    </div>
+                    @using (Html.BeginForm("Index", "UserAccount", FormMethod.Get))
+                    {
+
+                        <div class="class_search" style="float:right">
+                            <div class="col-md-push-12 " style="margin-bottom: 10px">
+                                <input type="text" name="searchString" />
+                                <button type="submit" class="btn btn-secondary "> Tìm kiếm</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tài khoản</th>
+                            <th>Password</th>
+                            <th>Trạng thái</th>
+                            <th>#</th>
+                        </tr>
+                    </thead>
+                    @{
+                        var i = 1;
+                    }
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row_@item.ID">
+                                <td>@item.ID</td>
+
+                                <td>@item.UserName</td>
+                                <td>@item.Password</td>
+                                <td>
+                                    @{ 
+                                        string color = "btn-block";
+                                        if (item.Status)
+                                        {
+                                                <a href="#" class="btn btn-success btn-active" data-id="@item.ID">
+                                                  @(item.Status ? "Active ":"Block") </a>
+                                        }
+                                        else
+                                          {
+                                              <a href="#" class="btn btn-success btn-danger" data-id="@item.ID">
+                                               @(item.Status ? "Active ":"Block")
+                                              </a>                                           }
+                                    }                                  
+                                </td>
+                                <td>
+                                    <a href="/Admin/MenuType/Edit/@item.ID"><i class="fas fa-edit"></i></a>
+                                    |
+                                    @Ajax.ActionLink(" ", "Delete", new { @id = item.ID }, new AjaxOptions
+                               {
+                                   Confirm = "Bạn có muốn xoá bản ghi này không?",
+                                   OnComplete = "$('#row_" + item.ID + "').remove()",
+                                   HttpMethod = "Delete",
+                                    }, new { @class = "fas fa-trash-alt" })
+                            </tr>
+
+                            i++;
+
+                        }
+                    </tbody>
+                </table>
+                @Html.PagedListPager(Model, page => Url.Action("Index", new { page }))
+            </div>
+        </div>
+    </div>
+
+</div>
+@section jsFooter{
+    <script src="~/Assets/Admin/js/controller/userController.js"></script>
+}
+<!-- /.container-fluid -->
